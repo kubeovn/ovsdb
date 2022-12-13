@@ -1,3 +1,3 @@
-module github.com/greenpau/ovsdb
+module github.com/kubeovn/ovsdb
 
-go 1.14
+go 1.17
