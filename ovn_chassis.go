@@ -23,6 +23,7 @@ import (
 type OvnChassis struct {
 	UUID      string
 	Name      string
+	Hostname  string
 	IPAddress net.IP
 	Encaps    struct {
 		UUID  string
@@ -37,7 +38,7 @@ type OvnChassis struct {
 func (cli *OvnClient) GetChassis() ([]*OvnChassis, error) {
 	chassis := []*OvnChassis{}
 	// First, get the names and UUIDs of chassis.
-	query := "SELECT _uuid, name, encaps FROM Chassis"
+	query := "SELECT _uuid, hostname, name, encaps FROM Chassis"
 	result, err := cli.Database.Southbound.Client.Transact(cli.Database.Southbound.Name, query)
 	if err != nil {
 		return nil, fmt.Errorf("%s: '%s' table error: %s", cli.Database.Southbound.Name, "Chassis", err)
@@ -56,6 +57,14 @@ func (cli *OvnClient) GetChassis() ([]*OvnChassis, error) {
 				continue
 			}
 			c.UUID = r.(string)
+		}
+		if r, dt, err := row.GetColumnValue("hostname", result.Columns); err != nil {
+			continue
+		} else {
+			if dt != "string" {
+				continue
+			}
+			c.Hostname = r.(string)
 		}
 		if r, dt, err := row.GetColumnValue("name", result.Columns); err != nil {
 			continue
