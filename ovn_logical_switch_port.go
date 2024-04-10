@@ -132,6 +132,7 @@ func (cli *OvnClient) GetLogicalSwitchPorts() ([]*OvnLogicalSwitchPort, error) {
 		} else {
 			port.ExternalIDs = make(map[string]string)
 		}
+		port.LogicalSwitchName = port.ExternalIDs["ls"]
 		if r, dt, err := row.GetColumnValue("addresses", result.Columns); err == nil {
 			switch dt {
 			case "string":
